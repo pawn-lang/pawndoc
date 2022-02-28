@@ -352,11 +352,18 @@ With the macros:
 
 ```pawn
 #define DEFINED(%0) (defined %0 && !defined _@%0)
-#define FUNCDOC(%0(%1)); stock %0(%1) { } static stock _@%0() { }
+#define FUNCDOC(%0(%1)) stock %0(%1) { } forward _@%0()
 #define ENUMDOC(%0) const %0:_@%0 = %0
-#define CONSTDOC(%0=%1); const %0 = %1; static stock _@%0() { }
+#define CONSTDOC(%0=%1) const %0 = %1
 
 #define _@%0\32; _@
 ```
 
 The problem with these is that you end up with an extra function in the output for the `_@` check.
+This is not ideal, but there are ways to hide functions (namely, XML comments) and this is the only
+way* to get a function in place of a macro to get its comments.
+
+\* If this isn't the only way, please suggest another one!  Unused `native`s don't appear in the
+output but aren't visible in the second pass, `forward`s aren't implemented, but still in the
+output, and anything else is the same - not visible next pass or in the XML.
+
