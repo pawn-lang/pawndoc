@@ -220,8 +220,8 @@ enum E_NUM
 {
 	E_LEMENT,
 }
-// Extra function to use `E_NUM` as a symbol, so it gets in the output.
-static stock E_NUM:UnusedFunction() { return E_NUM; }
+// Extra constant to use `E_NUM` as a symbol, so it gets in the output.
+const E_NUM:UnusedConst = E_NUM;
 ```
 
 The additional comment before the documentation, and the unused function after do make documenting
@@ -277,6 +277,7 @@ only appear correctly if they are assigned to something, assign their value to a
 `const`:
 
 ```pawn
+///
 /**
  * <remarks>
  *   <c>e num</c> - get it?
@@ -288,12 +289,12 @@ enum E_NUM
 	A = 5
 }
 
-const E_NUM:E_NUM__ = E_NUM;
+const E_NUM:_@E_NUM = E_NUM;
 ```
 
-Basic macros are also easy to solve - define a variable with the same name before the macro.  This
-will get the comments and appear in the output, while the macro defined after it will be used
-throughout the code:
+Basic macros being undocumentable are also easy to solve - define a variable with the same name
+before the macro.  This will get the comments and appear in the output, while the macro defined
+after it will be used throughout the code:
 
 ```pawn
 /**
@@ -338,4 +339,24 @@ Unfortunately, this breaks a common pattern:
 Because of the magic of the compiler (making multiple passes, documented later), this code will stop
 working because the `#if !defined IsNull` sees the function definition, even though it comes first
 (this is why ALS works - the pre-processor can see functions before you define them).  The solution
-is a more complex 
+is a more complex definition check that can take these passes in to account:
+
+```pawn
+#if !DEFINED(IsNull)
+	FUNCDOC(IsNull(const str[]));
+	#define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0')
+#endif
+```
+
+With the macros:
+
+```pawn
+#define DEFINED(%0) (defined %0 && !defined _@%0)
+#define FUNCDOC(%0(%1)); stock %0(%1) { } static stock _@%0() { }
+#define ENUMDOC(%0) const %0:_@%0 = %0
+#define CONSTDOC(%0=%1); const %0 = %1; static stock _@%0() { }
+
+#define _@%0\32; _@
+```
+
+The problem with these is that you end up with an extra function in the output for the `_@` check.
