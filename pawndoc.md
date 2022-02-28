@@ -165,10 +165,14 @@ libraries or general information.  *fixes.inc* for example has a huge
 unattached documentation block at the start of the file for settings, styles,
 credits, and more.
 
-### Enumerations.
+### Documented Symbols
 
-`enum`s can be documented, but there's a small bug with them - they are only included in the output
-if you use them as an array size or constant, not a tag, nor if you only use a member:
+Most symbols can be documented - functions (all types), variables, constants, and enums.  Things
+that can't be documented include pre-processor macros and enum members.  Some comments are removed
+from the XML if their symbol isn't used - mainly constants and natives; variables and functions are
+always in the XML, even if they don't end up in the final AMX.  Sadly, while enums can be
+documented, they are quite buggy - they are only included in the output if you use them as an array
+size or constant, not a tag, nor if you only use a member:
 
 ```pawn
 /**
@@ -188,11 +192,6 @@ new gValue = E_NUM; // This will generate output.
 new gMember = A; // This will not.
 ```
 
-Unused functions and variables are still documented in the XML (because this could be the generic
-documentation for a library), unused `const`s and `native`s do not have their comments in the XML,
-but there's a bug with `enum`s - they won't appear in the XML but their comments will.  Where?  Well
-read on to find out about unattached comments.  If it is output, it looks like:
-
 ```xml
 <member name="T:E_NUM" value="6">
 	<tagname value="E_NUM"/>
@@ -202,32 +201,33 @@ read on to find out about unattached comments.  If it is output, it looks like:
 </member>
 ```
 
-### General Comments.
-
-Macros do not have any documentation comments ever:
+Unused enums will also not appear in the XML, but their comments still will, which means those
+comments will end up in the `<general>` section with all the unattached comments.  Sometimes their
+comments will end up on the wrong symbol, and sometimes they will inherit the comments of another
+symbol (the next one, not just a random one).  Finally, it is possible to crash the compiler on
+certain enums with a mix of attached and unattached comments.  Why is not currently explored, but
+the solution to all these problems are easy - use the enum:
 
 ```pawn
+// An empty unattached documentation block before the enum.  Prevents previous
+// comments leaking to the enum
+///
+
 /**
- * <remarks>
- *   But what is the question?
- * </remarks>
- */
-
-#define THE_ANSWER (42)
+	Documentation on the enum, as normal.
+*/
+enum E_NUM
+{
+	E_LEMENT,
+}
+// Extra function to use `E_NUM` as a symbol, so it gets in the output.
+static stock E_NUM:UnusedFunction() { return E_NUM; }
 ```
 
-There's nothing stopping you writing this code, so where do the contents of that and other
-unattached comments go?
+The additional comment before the documentation, and the unused function after do make documenting
+enums a little more tricky, but there are macros later to simplify this.
 
-All documentation comments not attached to a function, variable, or correctly used enum, go to a
-special `<general>` section, near the top of the file and used for "general" comments:
-
-```xml
-<!-- general -->
-<general>
-	<remarks>  But what is the question?  </remarks> 
-</general>
-```
+Oh, and you can't document anonymous enums either - sorry.
 
 ### XML
 
