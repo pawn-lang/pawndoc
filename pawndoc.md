@@ -462,9 +462,10 @@ this can be exploited to link many comments together by ensuring that EVERY line
 ```
 
 If `SOME_CHECK` is `true`, then `Func1` and `Func2` will both get the correct documentation
-attached (with a few extra blank lines).  If it is `false` then all the `///` lines will be
-attached to `UnusedForHidingDocumentation`, which is never used and so doesn't appear in the output,
-taking all its documentation with it.  `fixes.inc` has an instance of this spanning several
-hundred lines and nearly as many function definitions, because using a fake extra function for all
-of them would have been massively excessive.
+attached (with a few extra blank lines).  The moment `Func1` ends the comments stop being attached
+to it and start getting attached to the next function. If `SOME_CHECK` is `false` then all the `///`
+lines will be attached to `UnusedForHidingDocumentation`, which is never used and so doesn't appear
+in the output, taking all its documentation with it.  `fixes.inc` has an instance of this spanning
+several hundred lines and nearly as many function definitions, because using a fake extra function
+for all of them would have been massively excessive.
 
