@@ -351,7 +351,7 @@ is a more complex definition check that can take these passes in to account:
 With the macros:
 
 ```pawn
-#define DEFINED(%0) (defined %0 && !defined _@%0)
+#define DEFINED(%0) ((defined %0) && !(defined _@%0))
 #define FUNCDOC(%0(%1)) stock %0(%1) { } forward _@%0()
 #define ENUMDOC(%0) const %0:_@%0 = %0
 #define CONSTDOC(%0=%1) const %0 = %1
@@ -363,7 +363,108 @@ The problem with these is that you end up with an extra function in the output f
 This is not ideal, but there are ways to hide functions (namely, XML comments) and this is the only
 way* to get a function in place of a macro to get its comments.
 
+Examples:
+
+```pawn
+///
+/**
+ *  My enumeration.
+ */
+enum E_NUM
+{
+}
+// After the `enum`.
+ENUMDOC(E_NUM);
+
+/**
+ *  My macro.
+ */
+FUNCDOC(MyMacro(const string[]));
+// After the `FUNCDOC`.
+#define MyMacro(%0) (%0[0])
+
+/**
+ *  My define.
+ */
+CONSTDOC(MY_DEFINE = 42);
+// After the `CONSTDOC`.
+#define MY_DEFINE (42)
+```
+
 \* If this isn't the only way, please suggest another one!  Unused `native`s don't appear in the
 output but aren't visible in the second pass, `forward`s aren't implemented, but still in the
 output, and anything else is the same - not visible next pass or in the XML.
+
+### Pre-Processor Issue
+
+There's one more issue with documentation comments - they aren't affected by the pre-processor.
+This code will not work as expected when `IsNull` already exists:
+
+```pawn
+#if !DEFINED(IsNull)
+	/**
+	 * <summary>
+	 *   Check if a string is empty, or almost empty.
+	 * </summary>
+	 */
+
+	FUNCDOC(IsNull(const string[]));
+	#define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0')
+#endif
+```
+
+If `IsNull` already exists this branch will not be entered, but the documentation comments will
+still be parsed and output.  Thus, because the function they should be attached to isn't output,
+this comment becomes an unattached comment and ends up in `<general>`  So by trying to hide
+functions a load of irrelevant comments end up in the XML header.  So we need a fake function to
+attach the documentation to in the other case (for which we can use a `native` or `const`, so the
+comments don't go in the output at all):
+
+```pawn
+#define HIDEDOC(%0) native _@%0()
+```
+
+And put the comments above the directives:
+
+```pawn
+/**
+ * <summary>
+ *   Check if a string is empty, or almost empty.
+ * </summary>
+ */
+
+#if DEFINED(IsNull)
+	HIDEDOC(IsNull);
+#else
+	FUNCDOC(IsNull(const string[]));
+	#define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0')
+#endif
+```
+
+It is also possible to merge multiple documentation comments for multiple functions together.  When
+using `///` the comments will go on the next function, unless that function is not compiled.  So
+this can be exploited to link many comments together by ensuring that EVERY line ends with `///`:
+
+```pawn
+#if SOME_CHECK
+	/// The documentation for <c>Func1</c>
+	stock Func1() ///
+	{             ///
+	}             ///
+	              ///
+	/// The documentation for <c>Func1</c>
+	stock Func2() ///
+	{             ///
+	}             ///
+#else             ///
+	native UnusedForHidingDocumentation();
+#endif
+```
+
+If `SOME_CHECK` is `true`, then `Func1` and `Func2` will both get the correct documentation
+attached (with a few extra blank lines).  If it is `false` then all the `///` lines will be
+attached to `UnusedForHidingDocumentation`, which is never used and so doesn't appear in the output,
+taking all its documentation with it.  `fixes.inc` has an instance of this spanning several
+hundred lines and nearly as many function definitions, because using a fake extra function for all
+of them would have been massively excessive.
 
