@@ -339,29 +339,59 @@ Unfortunately, this breaks a common pattern:
 Because of the magic of the compiler (making multiple passes, documented later), this code will stop
 working because the `#if !defined IsNull` sees the function definition, even though it comes first
 (this is why ALS works - the pre-processor can see functions before you define them).  The solution
-is a more complex definition check that can take these passes in to account:
+is to use a `native` instead of a normal function, because natives aren't recorded for future
+passes:
 
 ```pawn
-#if !DEFINED(IsNull)
-	FUNCDOC(IsNull(const str[]));
+#if !defined IsNull
+	native IsNull(const str[]);
 	#define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0')
 #endif
 ```
 
-With the macros:
+But this gives another problem - unused natives aren't included in the XML, so we need another
+function to call that native:
 
 ```pawn
-#define DEFINED(%0) ((defined %0) && !(defined _@%0))
-#define FUNCDOC(%0(%1)) stock %0(%1) { } forward _@%0()
-#define ENUMDOC(%0) const %0:_@%0 = %0
-#define CONSTDOC(%0=%1) const %0 = %1
-
-#define _@%0\32; _@
+#if !defined IsNull
+	native IsNull(const str[]);
+	static stock _@IsNull(const str[]) { IsNull(str); }
+	#define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0')
+#endif
 ```
 
-The problem with these is that you end up with an extra function in the output for the `_@` check.
-This is not ideal, but there are ways to hide functions (namely, XML comments) and this is the only
-way* to get a function in place of a macro to get its comments.
+This introduces yet more problems (especially when abstracting this fix to a macro):
+
+* How should `IsNull` be called?  Determining the parameters for a function from its signature is
+possible in a generic macro, but very very complicated.
+* Now there's a second function in the XML - `_@IsNull`, that is never used and shouldn't be used,
+but its in there cluttering things up.
+* If the function in question is 30+ characters long the addition of `_@` to make a new unique
+function name will give warnings.
+
+The final solution is even more complex, so the explanation is in a later section:
+
+```pawn
+#if __COMPILER_FIRST_PASS
+	// First compiler pass only.
+	#define FUNC_PAWNDOC(%0(%1)); native %0(%1) = __PAWNDOC; stock PAWNDOC() <__PAWNDOC:%0> { (%0()); }
+#else
+	#define FUNC_PAWNDOC(%0(%1));
+#endif
+
+#if __COMPILER_FIRST_PASS
+	// First compiler pass only.
+	#define CONST_PAWNDOC(%0=%1); static stock %0 = %1;
+#else
+	#define CONST_PAWNDOC(%0);
+#endif
+
+#define ENUM_PAWNDOC(%0); static stock %0:_@%0() { return %0; }
+
+// Strip tags from states.
+#define __PAWNDOC:%0:%1> __PAWNDOC:%1>
+#define _@%0\32; _@
+```
 
 Examples:
 
@@ -374,26 +404,27 @@ enum E_NUM
 {
 }
 // After the `enum`.
-ENUMDOC(E_NUM);
+ENUM_PAWNDOC(E_NUM);
 
 /**
  *  My macro.
  */
-FUNCDOC(MyMacro(const string[]));
-// After the `FUNCDOC`.
+FUNC_PAWNDOC(MyMacro(const string[]));
+// After the `FUNC_PAWNDOC`.
 #define MyMacro(%0) (%0[0])
 
 /**
  *  My define.
  */
-CONSTDOC(MY_DEFINE = 42);
-// After the `CONSTDOC`.
+CONST_PAWNDOC(MY_DEFINE = 42);
+// After the `CONST_PAWNDOC`.
 #define MY_DEFINE (42)
 ```
 
-\* If this isn't the only way, please suggest another one!  Unused `native`s don't appear in the
-output but aren't visible in the second pass, `forward`s aren't implemented, but still in the
-output, and anything else is the same - not visible next pass or in the XML.
+If you can see what's going on here you'll see that there is still an extra function generated in
+the XML - called `PAWNDOC`  However, other solutions give an extra function for every documented
+macro, this only gives one total, and that one can be carefully documented to explain *why* it is
+there (possibly by linking to this document).
 
 ### Pre-Processor Issue
 
@@ -401,14 +432,14 @@ There's one more issue with documentation comments - they aren't affected by the
 This code will not work as expected when `IsNull` already exists:
 
 ```pawn
-#if !DEFINED(IsNull)
+#if !defined IsNull
 	/**
 	 * <summary>
 	 *   Check if a string is empty, or almost empty.
 	 * </summary>
 	 */
 
-	FUNCDOC(IsNull(const string[]));
+	FUNC_PAWNDOC(IsNull(const string[]));
 	#define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0')
 #endif
 ```
@@ -421,7 +452,7 @@ attach the documentation to in the other case (for which we can use a `native` o
 comments don't go in the output at all):
 
 ```pawn
-#define HIDEDOC(%0) native _@%0()
+#define HIDE_PAWNDOC(%0) native _@%0()
 ```
 
 And put the comments above the directives:
@@ -433,13 +464,17 @@ And put the comments above the directives:
  * </summary>
  */
 
-#if DEFINED(IsNull)
-	HIDEDOC(IsNull);
+#if defined IsNull
+	HIDE_PAWNDOC(IsNull);
 #else
-	FUNCDOC(IsNull(const string[]));
+	FUNC_PAWNDOC(IsNull(const string[]));
 	#define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0')
 #endif
 ```
+
+You may notice that this still has the `_@` prefix problem when the name is too long, but it
+doesn't matter - the name passed to `HIDE_PAWNDOC` just has to be unique.  The purpose is to *not* be in
+the XML output, so if a different shorter function name is used it doesn't matter.
 
 It is also possible to merge multiple documentation comments for multiple functions together.  When
 using `///` the comments will go on the next function, unless that function is not compiled.  So
@@ -468,4 +503,26 @@ lines will be attached to `UnusedForHidingDocumentation`, which is never used an
 in the output, taking all its documentation with it.  `fixes.inc` has an instance of this spanning
 several hundred lines and nearly as many function definitions, because using a fake extra function
 for all of them would have been massively excessive.
+
+### `PAWNDOC` Function
+
+The `FUNC_PAWNDOC` macro looks like:
+
+```pawn
+#define FUNC_PAWNDOC(%0(%1)); native %0(%1) = __PAWNDOC; stock PAWNDOC() <__PAWNDOC:%0> { (%0()); }
+```
+
+The function `PAWNDOC` is used to call the natives to put them in the output XML because there is
+then only one superfluous function in the XML, instead of hundreds.  The use of automata means that
+this one function can instead be redefined hundreds of times itself.  The use of
+`native Func() = __PAWNDOC;` instead of just `native Func();` means that if you do somehow call it
+you'll get an error about `__PAWNDOC` being an unknown function, not random macros that do exist.
+
+And the call has no parameters, why is that not always an error?  Surely that means that the call
+doesn't (usually) match the function declaration?  The answer is simple - `PAWNDOC` is never called,
+so its contents are never accurately checked.  The code is syntactically correct and that's all the
+compiler cares about in code that is never run (and sometimes not even that).
+
+Finally, the use of `:%0` as a state, rather than `_@%0` as a separate symbol means that if `%0` is
+under the function name length limit, the `:%0` state always is as well.
 
