@@ -265,6 +265,50 @@ The names have the following prefixes: `T` - `enum`, `C` - `const`, `F` - variab
 The commented section headers also appear in the XML file.  And yes, both `/` and `\` are used for
 path separators at the start.
 
+## XSL
+
+XSL takes an XML file and translates it in to something else, like HTML.  This can be used to
+display the XML nicely in a browser.  Unfortunately when loading XSL from disk some browsers will no
+longer render it for "security" reasons.  IE amazingly still works, the latest Firefox doesn't,
+Chrome does but only when launched with the flag `--allow-file-access-from-files`.  This repo
+includes a heavilly modified `pawndoc.xsl` file that needs to be placed in `pawno/xml/` to be used
+correctly (technically in an `xml/` subdirectory of your compiler's location).  It has been expanded
+to group functions/variables etc. by library and has the possibility to switch on markdown mode.
+
+Markdown mode will augment the output displayed in the browser with the markdown formatting
+commands required to render the text elsewhere.  While the documentation will still look nice,
+selecting it all and copying/pasting it will just get the unformatted markdown commands.
+
+## Documenting A Library
+
+At the top of your file:
+
+```pawn
+/// <library name="my library" license="mpl" version="1.0" summary="Example library">
+///   <remarks>
+///     Anything else can go in here.
+///   </remarks>
+/// </library>
+
+///
+```
+
+Only `name` is required.
+
+Then annotate functions etc with the fact that they are part of this library (sadly this can't be
+done automatically, even when they're all in the same file):
+
+```pawn
+/// <library>my library</library>
+/// An example function in this library
+Library_Function()
+{
+}
+```
+
+The custom XSL included here will group library members together and put everything without a
+`<library>` membership tag at the top of the rendered HTML.
+
 ## Bugs And Solutions
 
 Solving the `enum` bug is easy.  Since unused `const`s do not appear in the XML output, and `enum`s
