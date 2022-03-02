@@ -1,3 +1,23 @@
+/*
+	Version: MPL 1.1
+	
+	The contents of this file are subject to the Mozilla Public License Version 
+	1.1 (the "License"); you may not use this file except in compliance with 
+	the License. You may obtain a copy of the License at 
+	http://www.mozilla.org/MPL/
+	
+	Software distributed under the License is distributed on an "AS IS" basis,
+	WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+	for the specific language governing rights and limitations under the
+	License.
+	
+	The Original Code is the code-parse.inc code analyser.
+	
+	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
+	Portions created by the Initial Developer are Copyright (c) 2022
+	the Initial Developer. All Rights Reserved.
+*/
+
 #if defined FIXES_PAWNDOC
 	// fixes.inc already does all of this.
 	#if !FIX_Pawndoc
@@ -60,7 +80,11 @@
 #define _PAWNDOC_BRACKETS ()
 
 /**
- * <library name="pawndoc" summary="Macros and documentation to avoid pawndoc issues.">
+ * <library
+ *   name="pawndoc"
+ *   summary="Macros and documentation to avoid pawndoc issues."
+ *   license="Copyright (c) 2022 Alex &quot;Y_Less&quot; Cole.  Licensed under MPL 1.1"
+ * >
  *   <remarks>
  *     This code is identical to the same code in <em>fixes.inc</em> and
  *     <em>YSI</em>, even down to the macro names just to avoid conflicts if
