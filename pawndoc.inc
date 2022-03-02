@@ -62,12 +62,10 @@
 
 #if _PAWNDOC_FIRST_PASS
 	// First compiler pass only.
-	#define _FIXES_FUNC_PAWNDOC(%0(%1)); native %0(%1) = __PAWNDOC; stock PAWNDOC() <__PAWNDOC:%0> { (%0()); }
+	#define _FIXES_FUNC_PAWNDOC(%0(%1)); native %0(%1) = __PAWNDOC; stock PAWNDOC _PAWNDOC_BRACKETS <__PAWNDOC:%0> { (%0()); }
 #else
 	#define _FIXES_FUNC_PAWNDOC(%0(%1));
 #endif
-// Strip tags from states.
-#define __PAWNDOC:%0:%1> __PAWNDOC:%1>
 
 _FIXES_FUNC_PAWNDOC(FUNC_PAWNDOC(const symbol[]));
 
@@ -289,4 +287,13 @@ static stock ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZY;
  */
 
 static stock _zzzzzzzzzzzzzzzzzzzzzzzzzzzzzy;
+
+// Some compile-time safety.
+#define PAWNDOC() Dont_Call_PAWNDOC()
+
+// Strip tags from states.
+#define __PAWNDOC:%0:%1> __PAWNDOC:%1>
+
+// Defer macro expansion.
+#define _PAWNDOC_BRACKETS ()
 
