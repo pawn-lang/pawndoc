@@ -1,3 +1,5 @@
+// Sadly this option doesn't work with `#pragma`.  Invoke the compiler with `-r`
+// on the command line or in `pawn.cfg` to see the XML documentation output.
 #pragma option -r
 
 #include "pawndoc"
@@ -32,5 +34,4 @@ main()
 {
 	print("Testing pawndoc output");
 }
-
 
