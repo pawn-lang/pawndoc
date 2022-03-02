@@ -386,7 +386,7 @@ The final solution is even more complex, so the explanation is in a later sectio
 	#define CONST_PAWNDOC(%0);
 #endif
 
-#define ENUM_PAWNDOC(%0); static stock %0:_@%0() { return %0; }
+#define _FIXES_ENUM_PAWNDOC(%0); stock PAWNDOC PP_BRACKETS<> <__PAWNDOC:%0> { random(_:%0); }
 
 // Some compile-time safety.
 #define PAWNDOC() Dont_Call_PAWNDOC()
@@ -396,9 +396,6 @@ The final solution is even more complex, so the explanation is in a later sectio
 
 // Defer macro expansion.
 #define _PAWNDOC_BRACKETS ()
-
-// Consume excess spaces.
-#define _@%0\32; _@
 ```
 
 Examples:
@@ -460,7 +457,7 @@ attach the documentation to in the other case (for which we can use a `native` o
 comments don't go in the output at all):
 
 ```pawn
-#define HIDE_PAWNDOC(%0) native _@%0()
+#define HIDE_PAWNDOC(%0) const %0 = 0;
 ```
 
 And put the comments above the directives:
@@ -479,10 +476,6 @@ And put the comments above the directives:
 	#define IsNull(%0) ((%0[(%0[0])=='\1'])=='\0')
 #endif
 ```
-
-You may notice that this still has the `_@` prefix problem when the name is too long, but it
-doesn't matter - the name passed to `HIDE_PAWNDOC` just has to be unique.  The purpose is to *not* be in
-the XML output, so if a different shorter function name is used it doesn't matter.
 
 It is also possible to merge multiple documentation comments for multiple functions together.  When
 using `///` the comments will go on the next function, unless that function is not compiled.  So

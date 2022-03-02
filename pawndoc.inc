@@ -13,6 +13,12 @@
 // So YSI doesn't double-declare things.
 #define FIXES_PAWNDOC
 
+// Strip tags from states.
+#define __PAWNDOC:%0:%1> __PAWNDOC:%1>
+
+// Defer macro expansion.
+#define _PAWNDOC_BRACKETS ()
+
 /**
  * <library name="pawndoc" summary="Macros and documentation to avoid pawndoc issues." />
  * <remarks>
@@ -134,7 +140,7 @@ _FIXES_FUNC_PAWNDOC(HIDE_PAWNDOC(const symbol[]));
  * </remarks>
  */
 
-#define _FIXES_ENUM_PAWNDOC(%0); static stock %0:_@%0() { return %0; }
+#define _FIXES_ENUM_PAWNDOC(%0); stock PAWNDOC PP_BRACKETS<> <__PAWNDOC:%0> { random(_:%0); }
 
 _FIXES_FUNC_PAWNDOC(ENUM_PAWNDOC(const symbol[]));
 
@@ -167,6 +173,9 @@ _FIXES_FUNC_PAWNDOC(ENUM_PAWNDOC(const symbol[]));
 	{
 	}
 #endif
+
+// Some compile-time safety.
+#define PAWNDOC() Dont_Call_PAWNDOC()
 
 /**
  * <library>pawndoc</library>
@@ -287,16 +296,4 @@ static stock ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZY;
  */
 
 static stock _zzzzzzzzzzzzzzzzzzzzzzzzzzzzzy;
-
-// Some compile-time safety.
-#define PAWNDOC() Dont_Call_PAWNDOC()
-
-// Strip tags from states.
-#define __PAWNDOC:%0:%1> __PAWNDOC:%1>
-
-// Defer macro expansion.
-#define _PAWNDOC_BRACKETS ()
-
-// Consume excess spaces.
-#define _@%0\32; _@
 
