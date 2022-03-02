@@ -1,21 +1,16 @@
-# Pawndoc, Macros, And Compiler Passes
+# Pawndoc
 
 ## Introduction
 
-This tutorial covers some deep and complex interactions between three different parts of the
-compiler; interactions and parts that most people will probably never think about (and, honestly,
-will never need to).  It covers when functions and macros are defined (thus how the compiler knows a
-function exists before you define it), the basics of pawndoc (the in-built documentation system) and
-what can and can't be documented, and work-arounds to document those things that "can't" be
-documented without breaking anything else.
+This include documents how to document your code and functions using *pawndoc*, the XML-based
+documentation comments system built in to the compiler.  It also discusses some bugs with the
+system, presents some solutions for said bugs, and extends what can and can't be documented.
 
 If you only want to learn about documenting your code, just read the first section.  At the end of
 that section some bugs are explained, and solutions provided wholesale.  If you don't care about why
 they work, just take the solutions and use them.  If you do care, read the later sections.
 
-## Pawndoc
-
-### Documentation Comments.
+## Documentation Comments.
 
 The simplest place to start is with *pawndoc*, the compiler in-built system for generating
 documentation from comments.  When you compile a mode with the `-r` flag an XML file is generated
@@ -44,7 +39,7 @@ That will produce the following in an XML file:
 </member>
 ```
 
-### Syntax And Tags.
+## Syntax And Tags.
 
 There are a few standard XML tags, like `<summary>`, `<remarks>`, and `<param>` (which can be given
 explicitly or auto-generated); but any valid XML can be used and the result parsed for output via a
@@ -93,7 +88,7 @@ the output:
  */
 ```
 
-### Attached And Unattached Comments.
+## Attached And Unattached Comments.
 
 Documentation comments are attached to the next or current declaration:
 
@@ -165,7 +160,7 @@ libraries or general information.  *fixes.inc* for example has a huge
 unattached documentation block at the start of the file for settings, styles,
 credits, and more.
 
-### Documented Symbols
+## Documented Symbols
 
 Most symbols can be documented - functions (all types), variables, constants, and enums.  Things
 that can't be documented include pre-processor macros and enum members.  Some comments are removed
@@ -229,7 +224,7 @@ enums a little more tricky, but there are macros later to simplify this.
 
 Oh, and you can't document anonymous enums either - sorry.
 
-### XML
+## XML
 
 The XML file output has the following general structure:
 
@@ -270,7 +265,7 @@ The names have the following prefixes: `T` - `enum`, `C` - `const`, `F` - variab
 The commented section headers also appear in the XML file.  And yes, both `/` and `\` are used for
 path separators at the start.
 
-### Bugs And Solutions
+## Bugs And Solutions
 
 Solving the `enum` bug is easy.  Since unused `const`s do not appear in the XML output, and `enum`s
 only appear correctly if they are assigned to something, assign their value to an otherwise unused
@@ -336,11 +331,11 @@ Unfortunately, this breaks a common pattern:
 #endif
 ```
 
-Because of the magic of the compiler (making multiple passes, documented later), this code will stop
-working because the `#if !defined IsNull` sees the function definition, even though it comes first
-(this is why ALS works - the pre-processor can see functions before you define them).  The solution
-is to use a `native` instead of a normal function, because natives aren't recorded for future
-passes:
+Because of how the compiler makes multiple passes to find functions declared later in code and use
+them before their declaration (this is why ALS works - the pre-processor can see functions before
+you define them) this code will stop working because the `#if !defined IsNull` sees the new fake
+function definition, even though it comes first.  The solution is to use a `native` instead of a
+normal function, because natives aren't recorded for future passes:
 
 ```pawn
 #if !defined IsNull
@@ -431,7 +426,9 @@ the XML - called `PAWNDOC`  However, other solutions give an extra function for 
 macro, this only gives one total, and that one can be carefully documented to explain *why* it is
 there (possibly by linking to this document).
 
-### Pre-Processor Issue
+Or, just include this include!
+
+## Pre-Processor Issue
 
 There's one more issue with documentation comments - they aren't affected by the pre-processor.
 This code will not work as expected when `IsNull` already exists:
@@ -505,7 +502,23 @@ in the output, taking all its documentation with it.  `fixes.inc` has an instanc
 several hundred lines and nearly as many function definitions, because using a fake extra function
 for all of them would have been massively excessive.
 
-### `PAWNDOC` Function
+## Automata Issue
+
+If you are on the old compiler there is
+[another bug](https://github.com/pawn-lang/compiler/issues/184) with pawndoc comments that this
+library actually makes worse - state transitions are not correctly documented and instead generate
+uninitialised rubbish.  So after generation of the XML file, you have to clean it up with the
+following RegEx replacement:
+
+    Search: <transition target[^/]+/>
+    Replace: (nothing)
+
+This works 99% of the time, though you may get one where the corrupted target includes the character
+`/`, in which case you should manually delete them.  Note that YSI now includes manual documentation
+for transitions, but these all include the parameter `keep="true"`, which exists simply to not match
+that RegEx.  This is fixed in the community compiler.
+
+## `PAWNDOC` Function
 
 The `FUNC_PAWNDOC` macro looks like:
 
