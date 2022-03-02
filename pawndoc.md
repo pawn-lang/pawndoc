@@ -526,11 +526,23 @@ this one function can instead be redefined hundreds of times itself.  The use of
 `native Func() = __PAWNDOC;` instead of just `native Func();` means that if you do somehow call it
 you'll get an error about `__PAWNDOC` being an unknown function, not random macros that do exist.
 
-And the call has no parameters, why is that not always an error?  Surely that means that the call
+The call has no parameters, why is that not always an error?  Surely that means that the call
 doesn't (usually) match the function declaration?  The answer is simple - `PAWNDOC` is never called,
 so its contents are never accurately checked.  The code is syntactically correct and that's all the
 compiler cares about in code that is never run (and sometimes not even that).
 
-Finally, the use of `:%0` as a state, rather than `_@%0` as a separate symbol means that if `%0` is
-under the function name length limit, the `:%0` state always is as well.
+The use of `:%0` as a state, rather than `_@%0` as a separate symbol means that if `%0` is
+under the function name length limit, the `:%0` state always is as well.  Again, sadly that's not
+the case on the enums, but that's the only case for now.
+
+The function is declared as `PAWNDOC _PAWNDOC_BRACKETS` instead of `PAWNDOC()` so that the compiler
+doesn't match it against the `PAWNDOC()` macro.  This is to do with evaluation order - the compiler
+sees the text `PAWNDOC` and, per the definition of the macro, looks to see if this is followed by
+`()`.  It isn't, it is followed by `_PAWNDOC_BRACKETS`, so the replacement isn't done.  Then the
+compiler moves on to the next symbol and sees `_PAWNDOC_BRACKETS`.  This does exactly match a known
+macro and this symbol is replaced by `()`.  So the generated code will contain `PAWNDOC ()`, but by
+this point it is too late for the pre-processor; it doesn't backtrack and doesn't retry the earlier
+`PAWNDOC` macro.  This allows any calls to `PAWNDOC()` to be replaced by `Dont_Call_PAWNDOC()`,
+which doesn't exist and gives a compile-time error; but bypasses this replacement for the
+`PAWNDOC()` declarations.
 
