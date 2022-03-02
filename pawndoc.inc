@@ -297,3 +297,6 @@ static stock _zzzzzzzzzzzzzzzzzzzzzzzzzzzzzy;
 // Defer macro expansion.
 #define _PAWNDOC_BRACKETS ()
 
+// Consume excess spaces.
+#define _@%0\32; _@
+

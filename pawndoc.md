@@ -374,7 +374,7 @@ The final solution is even more complex, so the explanation is in a later sectio
 ```pawn
 #if __COMPILER_FIRST_PASS
 	// First compiler pass only.
-	#define FUNC_PAWNDOC(%0(%1)); native %0(%1) = __PAWNDOC; stock PAWNDOC() <__PAWNDOC:%0> { (%0()); }
+	#define FUNC_PAWNDOC(%0(%1)); native %0(%1) = __PAWNDOC; stock PAWNDOC _PAWNDOC_BRACKETS <__PAWNDOC:%0> { (%0()); }
 #else
 	#define FUNC_PAWNDOC(%0(%1));
 #endif
@@ -388,8 +388,16 @@ The final solution is even more complex, so the explanation is in a later sectio
 
 #define ENUM_PAWNDOC(%0); static stock %0:_@%0() { return %0; }
 
+// Some compile-time safety.
+#define PAWNDOC() Dont_Call_PAWNDOC()
+
 // Strip tags from states.
 #define __PAWNDOC:%0:%1> __PAWNDOC:%1>
+
+// Defer macro expansion.
+#define _PAWNDOC_BRACKETS ()
+
+// Consume excess spaces.
 #define _@%0\32; _@
 ```
 
