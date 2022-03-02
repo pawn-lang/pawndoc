@@ -9,6 +9,7 @@
 	#endif
 	#endinput
 #endif
+
 /**
  * <!--
  * <transition target[^/]+/>
@@ -19,7 +20,8 @@
  * <!--
  * :::::::: README ::::::::
  *
- * To read the generated XML output, copy `pawndoc.xsl` to `pawno/xml/`.
+ * To read the generated XML output, copy `pawndoc.xsl` to `xml/` in your
+ * compiler directory (usually `pawno/xml/`).
  *
  * This information goes very close to the top of the generated XML
  * documentation (because of include dependency orders), but doesn't appear in
@@ -29,10 +31,10 @@
 
 /**
  * <!--
- * There is <a href="https://github.com/pawn-lang/compiler/issues/184">a bug</a> in the
- * old compiler related to outputting documentation on state transitions ().  So
- * after generation of the XML file, you should clean it up with the following
- * RegEx replacement:
+ * There is <a href="https://github.com/pawn-lang/compiler/issues/184">a bug</a>
+ * in the old compiler related to outputting documentation on state transitions.
+ * So after generation of the XML file, you should clean it up with the
+ * following RegEx replacement:
  *
  * Search: <transition target[^/]+/>
  * Replace: (nothing)
@@ -58,13 +60,14 @@
 #define _PAWNDOC_BRACKETS ()
 
 /**
- * <library name="pawndoc" summary="Macros and documentation to avoid pawndoc issues." />
- * <remarks>
- *   This code is identical to the same code in <em>fixes.inc</em> and
- *   <em>YSI</em>, even down to the macro names just to avoid conflicts if they
- *   are all in use.  In which case include <em>fixes.inc</em> first, then this,
- *   then <em>YSI</em>.
- * </remarks>
+ * <library name="pawndoc" summary="Macros and documentation to avoid pawndoc issues.">
+ *   <remarks>
+ *     This code is identical to the same code in <em>fixes.inc</em> and
+ *     <em>YSI</em>, even down to the macro names just to avoid conflicts if
+ *     they are all in use.  In which case include <em>fixes.inc</em> first,
+ *     then this, then <em>YSI</em>.
+ *   </remarks>
+ * </library>
  */
 
 ///
