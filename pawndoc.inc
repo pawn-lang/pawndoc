@@ -10,10 +10,17 @@
 	#endinput
 #endif
 
+// So YSI doesn't double-declare things.
+#define FIXES_PAWNDOC
+
 /**
- * <library name="pawndoc"
- *   summary="Macros and documentation to avoid pawndoc issues.">
- * </section>
+ * <library name="pawndoc" summary="Macros and documentation to avoid pawndoc issues." />
+ * <remarks>
+ * This code is identical to the same code in <em>fixes.inc</em> and
+ * <em>YSI</em>, even down to the macro names just to avoid conflicts if they
+ * are all in use.  In which case include <em>fixes.inc</em> first, then this,
+ * then <em>YSI</em>.
+ * </remarks>
  */
 
 ///
@@ -55,14 +62,14 @@
 
 #if _PAWNDOC_FIRST_PASS
 	// First compiler pass only.
-	#define _PAWNDOC_FUNC_PAWNDOC(%0(%1)); native %0(%1) = __PAWNDOC; stock PAWNDOC() <__PAWNDOC:%0> { (%0()); }
+	#define _FIXES_FUNC_PAWNDOC(%0(%1)); native %0(%1) = __PAWNDOC; stock PAWNDOC() <__PAWNDOC:%0> { (%0()); }
 #else
-	#define _PAWNDOC_FUNC_PAWNDOC(%0(%1));
+	#define _FIXES_FUNC_PAWNDOC(%0(%1));
 #endif
 // Strip tags from states.
 #define __PAWNDOC:%0:%1> __PAWNDOC:%1>
 
-_PAWNDOC_FUNC_PAWNDOC(FUNC_PAWNDOC(const symbol[]));
+_FIXES_FUNC_PAWNDOC(FUNC_PAWNDOC(const symbol[]));
 
 /**
  * <library>pawndoc</library>
@@ -90,12 +97,12 @@ _PAWNDOC_FUNC_PAWNDOC(FUNC_PAWNDOC(const symbol[]));
 
 #if _PAWNDOC_FIRST_PASS
 	// First compiler pass only.
-	#define _PAWNDOC_CONST_PAWNDOC(%0=%1); static stock %0 = %1;
+	#define _FIXES_CONST_PAWNDOC(%0=%1); static stock %0 = %1;
 #else
-	#define _PAWNDOC_CONST_PAWNDOC(%0);
+	#define _FIXES_CONST_PAWNDOC(%0);
 #endif
 
-_PAWNDOC_FUNC_PAWNDOC(CONST_PAWNDOC(const symbol[] = 0));
+_FIXES_FUNC_PAWNDOC(CONST_PAWNDOC(const symbol[] = 0));
 
 /**
  * <library>pawndoc</library>
@@ -114,9 +121,9 @@ _PAWNDOC_FUNC_PAWNDOC(CONST_PAWNDOC(const symbol[] = 0));
  * </remarks>
  */
 
-#define _PAWNDOC_HIDE_PAWNDOC(%0); const %0 = 0;
+#define _FIXES_HIDE_PAWNDOC(%0); const %0 = 0;
 
-_PAWNDOC_FUNC_PAWNDOC(HIDE_PAWNDOC(const symbol[]));
+_FIXES_FUNC_PAWNDOC(HIDE_PAWNDOC(const symbol[]));
 
 /**
  * <library>pawndoc</library>
@@ -129,27 +136,27 @@ _PAWNDOC_FUNC_PAWNDOC(HIDE_PAWNDOC(const symbol[]));
  * </remarks>
  */
 
-#define _PAWNDOC_ENUM_PAWNDOC(%0); static stock %0:_@%0() { return %0; }
+#define _FIXES_ENUM_PAWNDOC(%0); static stock %0:_@%0() { return %0; }
 
-_PAWNDOC_FUNC_PAWNDOC(ENUM_PAWNDOC(const symbol[]));
+_FIXES_FUNC_PAWNDOC(ENUM_PAWNDOC(const symbol[]));
 
-#define HIDE_PAWNDOC _PAWNDOC_HIDE_PAWNDOC
-#define FUNC_PAWNDOC _PAWNDOC_FUNC_PAWNDOC
-#define FUNCTION_PAWNDOC _PAWNDOC_FUNC_PAWNDOC
-#define CONST_PAWNDOC _PAWNDOC_CONST_PAWNDOC
-#define ENUM_PAWNDOC _PAWNDOC_ENUM_PAWNDOC
+#define HIDE_PAWNDOC _FIXES_HIDE_PAWNDOC
+#define FUNC_PAWNDOC _FIXES_FUNC_PAWNDOC
+#define FUNCTION_PAWNDOC _FIXES_FUNC_PAWNDOC
+#define CONST_PAWNDOC _FIXES_CONST_PAWNDOC
+#define ENUM_PAWNDOC _FIXES_ENUM_PAWNDOC
 
 /**
-	<library>fixes.inc</library>
-	<hidden />
-	<remarks>
-		<c>PAWNDOC</c> is a fake function used throughout the code to invoke
-		natives that don't exist so we can attach pawndoc output to them and
-		have it show up in the XML output.  This is one function spread all over
-		the place using automata - one state per fake function.  This is so we
-		don't have dozens of auxiliary functions in the output, and so those
-		functions don't need unique names.
-	</remarks>
+ * <library>pawndoc</library>
+ * <hidden />
+ * <remarks>
+ * <c>PAWNDOC</c> is a fake function used throughout the code to invoke natives
+ * that don't exist so we can attach pawndoc output to them and have it show up
+ * in the XML output.  This is one function spread all over the place using
+ * automata - one state per fake function.  This is so we don't have dozens of
+ * auxiliary functions in the output, and so those functions don't need unique
+ * names.
+ * </remarks>
 */
 
 #if _PAWNDOC_FIRST_PASS
@@ -162,4 +169,125 @@ _PAWNDOC_FUNC_PAWNDOC(ENUM_PAWNDOC(const symbol[]));
 	{
 	}
 #endif
+
+/**
+	<library>pawndoc</library>
+	<hidden />
+	<remarks>
+		This function only exists to hide other functions.  It starts a massive
+		comment block in the pawndoc XML output that hides all internal
+		functions - that is, those that start with <c>_</c>.  This is a very
+		common pattern used throughout pawndoc (and most of programming).
+		Unfortunately these weirdly named internal functions appear in the
+		generated documentation always.  This is the best way to hide them.  You
+		still see one function (this one), but at least the documentation for
+		this one function can explain why it exists.
+		<p />
+		This is <c>ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ</c> and starts the internal
+		functions block.  This is the last possible name before the first
+		character is <c>_</c> when the functions are sorted lexicographically
+		(alphabetically).  There's also <c>ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZY</c>
+		that starts the variables block; they could have the same name if they
+		were not declared in the same scope, but they might not always be
+		separately defined.
+		<p />
+		Note that the actual hiding itself is done by an XML comment started
+		here and ended by a later variable.
+	</remarks>
+
+	<!--
+*/
+
+static stock ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ() {}
+
+/**
+	<library>pawndoc</library>
+	<hidden />
+	<remarks>
+		This function only exists to hide other functions.  It end a massive
+		comment block in the pawndoc XML output that hides all internal
+		functions - that is, those that start with <c>_</c>.  This is a very
+		common pattern used throughout pawndoc (and most of programming).
+		Unfortunately these weirdly named internal functions appear in the
+		generated documentation always.  This is the best way to hide them.  You
+		still see one function (<c>ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ</c>), but at
+		least the documentation for that can explain why it exists.
+		<p />
+		This is <c>_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</c> and ends the internal
+		functions block.  This is the last possible name before the first
+		character is no longer <c>_</c> when the functions are sorted
+		lexicographically (alphabetically).  There's also
+		<c>_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzy</c> that ends the variables block;
+		they could have the same name if they were not declared in the same
+		scope, but they might not always be separately defined.
+		<p />
+		Note that the actual hiding itself is done by an XML comment started
+		earlier and ended here.
+	</remarks>
+
+	-->
+*/
+
+static stock _zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz() {}
+
+/**
+	<library>pawndoc</library>
+	<hidden />
+	<remarks>
+		This variable only exists to hide other variables.  It starts a massive
+		comment block in the pawndoc XML output that hides all internal
+		variables - that is, those that start with <c>_</c>.  This is a very
+		common pattern used throughout pawndoc (and most of programming).
+		Unfortunately these weirdly named internal variables appear in the
+		generated documentation always.  This is the best way to hide them.  You
+		still see one variable (this one), but at least the documentation for
+		this one variable can explain why it exists.
+		<p />
+		This is <c>ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZY</c> and starts the internal
+		variables block.  This is the last possible name, except one, before the
+		first character is <c>_</c> when the functions are sorted
+		lexicographically (alphabetically).  There's also
+		<c>ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ</c> that starts the functions block;
+		they could have the same name if they were not declared in the same
+		scope, but they might not always be separately defined.
+		<p />
+		Note that the actual hiding itself is done by an XML comment started
+		here and ended by a later variable.
+	</remarks>
+
+	<!--
+*/
+
+static stock ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZY;
+
+/**
+	<library>pawndoc</library>
+	<hidden />
+	<remarks>
+		This variable only exists to hide other variables.  It end a massive
+		comment block in the pawndoc XML output that hides all internal
+		variables - that is, those that start with <c>_</c>.  This is a very
+		common pattern used throughout pawndoc (and most of programming).
+		Unfortunately these weirdly named internal variables appear in the
+		generated documentation always.  This is the best way to hide them.  You
+		still see one variable (<c>ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZY</c>), but at
+		least the documentation for that can explain why it exists.
+		<p />
+		This is <c>_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzy</c> and ends the internal
+		variables block.  This is the last possible name before the first
+		character is no longer <c>_</c>, except for one, when the functions are
+		sorted lexicographically (alphabetically).  There's also
+		<c>_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</c> that ends the functions block;
+		they could have the same name if they were not declared in the same
+		scope, but they might not always be separately defined.
+		<p />
+		Note that the actual hiding itself is done by an XML comment started
+		earlier and ended here.
+	</remarks>
+
+	-->
+*/
+
+static stock _zzzzzzzzzzzzzzzzzzzzzzzzzzzzzy;
+
 
