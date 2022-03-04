@@ -743,5 +743,5 @@ compiler this gives:
 `///` comments have been used to link different documentation blocks together, and because the
 `SSCANF_RunInit0` function, located immediately after `SSCANF_RunInit` lexicographically (i.e.
 alphabetically) doesn't exist both `<!--` and `-->` appear together, before the automatically
-added `<transition>` tag.
-
+added `<transition>` tag.  Sadly, this trick doesn't actually work - the `<transition>` target is
+usually so corrupt (invalid ASCII/UTF8) that the file won't load even when it is commented out.
