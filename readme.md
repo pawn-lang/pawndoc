@@ -549,18 +549,18 @@ for all of them would have been massively excessive.
 ## Automata Issue
 
 If you are on the old compiler there is
-[another bug](https://github.com/pawn-lang/compiler/issues/184) with pawndoc comments that this
-library actually makes worse - state transitions are not correctly documented and instead generate
+[another bug](https://github.com/pawn-lang/compiler/issues/184) with pawndoc comments  - state
+transitions (i.e. `state` statements) are not correctly documented and instead generate
 uninitialised rubbish.  So after generation of the XML file, you have to clean it up with the
 following RegEx replacement:
 
-    Search: <transition target[^/]+/>
+    Search: <transition target(.*?)/>
     Replace: (nothing)
 
 This works 99% of the time, though you may get one where the corrupted target includes the character
-`/`, in which case you should manually delete them.  Note that YSI now includes manual documentation
-for transitions, but these all include the parameter `keep="true"`, which exists simply to not match
-that RegEx.  This is fixed in the community compiler.
+sequence `/>`, in which case you should manually delete them.  Note that *YSI* now includes manual
+documentation for transitions, but these all include the parameter `keep="true"`, which exists
+simply to not match that RegEx.  This is fixed in the community compiler.
 
 ## `PAWNDOC` Function
 
@@ -595,4 +595,153 @@ this point it is too late for the pre-processor; it doesn't backtrack and doesn'
 `PAWNDOC` macro.  This allows any calls to `PAWNDOC()` to be replaced by `Dont_Call_PAWNDOC()`,
 which doesn't exist and gives a compile-time error; but bypasses this replacement for the
 `PAWNDOC()` declarations.
+
+## XML Comments
+
+It was already mentioned above that the documentation comments can include any XML tags, including
+XML comments, which will be output verbatim.  If you know the order that functions will be listed in
+the XML you can start an XML comment in the documentation for one function and end it in the
+documentation for another one.  And fortunately the order is simple - it's alphabetic:
+
+```pawn
+/**
+ * -->
+ * This documentation will appear to be attached to <c>FuncA</c>.
+ */
+
+FuncC()
+{
+}
+
+/**
+ * This function will be hidden in the XML.
+ */
+
+FuncB()
+{
+}
+/**
+ * <!--
+ */
+
+FuncA()
+{
+}
+```
+
+That code will generate the following XML:
+
+```xml
+		<member name="M:FuncA" syntax="FuncA()">
+			<stacksize value="1"/>
+			<!-- 
+		</member>
+		<member name="M:FuncB" syntax="FuncB()">
+			<stacksize value="1"/>
+			This function will be hidden in the XML. 
+		</member>
+		<member name="M:FuncC" syntax="FuncC()">
+			<stacksize value="1"/>
+			-->  This documentation will appear to be attached to <c>FuncA</c>. 
+		</member>
+```
+
+After removing the XML comments you can see how `FuncA` starts the `<member>` tag, then what was
+`FuncC` closes it:
+
+```xml
+		<member name="M:FuncA" syntax="FuncA()">
+			<stacksize value="1"/>
+			This documentation will appear to be attached to <c>FuncA</c>. 
+		</member>
+```
+
+This trick is used in both *YSI* and *fixes.inc* to hide all functions that start with `_`, i.e.
+internal functions that shouldn't be exposed in public documentation.  This was also experimented
+with as a way to hide the buggy `<transition>` tags in only the old compiler, using a combination of
+tricks to open and close XML comments on different functions, and `__PawnBuild` to check for the new
+compiler.  From *sscanf2.inc*:
+
+```pawn
+
+///
+/// <library>sscanf</library>
+/// <remarks>
+/// Generic initialisation code called from a range of different init publics.
+/// </remarks>
+///
+/// <!--
+#if !defined __PawnBuild ///
+	forward SSCANF_RunInit(); ///
+	/// There's a bug in the old compiler with the pawndoc generation for
+	/// functions containing <c>state</c>.  This little trick starts an XML
+	/// comment at the end of the documentation <c>SSCANF_RunInit</c> and
+	/// immediately closes it again in a dedicated function
+	/// <c>SSCANF_RunInit0</c>, which is sorted next lexicographically.
+	/// -->
+	static stock SSCANF_RunInit0()
+	{
+	}
+#endif
+static stock SSCANF_RunInit()
+{
+	// Code.
+}
+```
+
+On the old compiler this gives:
+
+```xml
+		<member name="M:SSCANF_RunInit" syntax="SSCANF_RunInit()">
+			<stacksize value="31"/>
+			<referrer name="OnScriptInit"/>
+			<referrer name="OnFilterScriptInit"/>
+			<referrer name="OnGameModeInit"/>
+			<referrer name="OnCachedInit"/>
+			<dependency name="GetMaxPlayers"/>
+			<dependency name="GetPlayerName"/>
+			<dependency name="IsPlayerConnected"/>
+			<dependency name="IsPlayerNPC"/>
+			<dependency name="SSCANF_Init"/>
+			<dependency name="SSCANF_IsConnected"/>
+			<dependency name="SSCANF_Join"/>
+			<dependency name="SSCANF_gInit"/>
+			<dependency name="true"/>
+			<library>sscanf</library> <remarks> Generic initialisation code called from a range of different init publics. </remarks>  <!--  <p/> <transition target="oji4e4jrR_"/>
+
+		</member>
+		<member name="M:SSCANF_RunInit0" syntax="SSCANF_RunInit0()">
+			<stacksize value="1"/>
+			There's a bug in the old compiler with the pawndoc generation for functions containing <c>state</c>.  This little trick starts an XML comment at the end of the documentation <c>SSCANF_RunInit</c> and immediately closes it again in a dedicated function <c>SSCANF_RunInit0</c>, which is sorted next lexicographically. -->
+		</member>
+```
+
+The gibberish `transition` is commented out (the contents will be essentially random).  On the new
+compiler this gives:
+
+```xml
+		<member name="M:SSCANF_RunInit" syntax="SSCANF_RunInit()">
+			<stacksize value="31"/>
+			<referrer name="OnScriptInit"/>
+			<referrer name="OnFilterScriptInit"/>
+			<referrer name="OnGameModeInit"/>
+			<referrer name="OnCachedInit"/>
+			<dependency name="GetMaxPlayers"/>
+			<dependency name="GetPlayerName"/>
+			<dependency name="IsPlayerConnected"/>
+			<dependency name="IsPlayerNPC"/>
+			<dependency name="SSCANF_Init"/>
+			<dependency name="SSCANF_IsConnected"/>
+			<dependency name="SSCANF_Join"/>
+			<dependency name="SSCANF_gInit"/>
+			<dependency name="true"/>
+			<library>sscanf</library> <remarks> Generic initialisation code called from a range of different init publics. </remarks>  <!--   There's a bug in the old compiler with the pawndoc generation for functions containing <c>state</c>.  This little trick starts an XML comment at the end of the documentation <c>SSCANF_RunInit</c> and immediately closes it again in a dedicated function <c>SSCANF_RunInit0</c>, which is sorted next lexicographically. --> <transition target="_ALS_go"/>
+
+		</member>
+```
+
+`///` comments have been used to link different documentation blocks together, and because the
+`SSCANF_RunInit0` function, located immediately after `SSCANF_RunInit` lexicographically (i.e.
+alphabetically) doesn't exist both `<!--` and `-->` appear together, before the automatically
+added `<transition>` tag.
 
