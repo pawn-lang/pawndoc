@@ -504,9 +504,6 @@
 	<xsl:if test="@license">
 		<div class="license"><xsl:value-of select="@license" /></div>
 	</xsl:if>
-	<xsl:if test="remarks">
-		<xsl:apply-templates select="remarks" />
-	</xsl:if>
 	<br /><xsl:apply-templates /><br />
 	<xsl:if test="@name = 'fixes.inc'">
 		<div class="members">
