@@ -85,6 +85,12 @@
  *   summary="Macros and documentation to avoid pawndoc issues."
  *   license="Copyright (c) 2022 Alex &quot;Y_Less&quot; Cole.  Licensed under MPL 1.1"
  * >
+ *   <summary pawndoc="true">
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such as library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
  *   <remarks>
  *     This code is identical to the same code in <em>fixes.inc</em> and
  *     <em>YSI</em>, even down to the macro names just to avoid conflicts if
