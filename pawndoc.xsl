@@ -378,12 +378,14 @@
 					this one it won't.  Example:
 
 /**
- * <summary pawndoc>
- *   This library uses the enhanced <em>pawndoc.xsl</em> from
- *   <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.  This
- *   XSL has features such asn library and markdown support, and will not render
- *   this message when used.
- * </summary>
+ * <library name="library">
+ *   <summary pawndoc>
+ *     This library uses the enhanced <em>pawndoc.xsl</em> from
+ *     <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.
+ *     This XSL has features such asn library and markdown support, and will not
+ *     render this message when used.
+ *   </summary>
+ * </library>
  */
 
 				-->
