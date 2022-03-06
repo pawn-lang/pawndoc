@@ -371,7 +371,7 @@
 
 <xsl:template match="summary">
 	<xsl:choose>
-			<xsl:when test="pawndoc">
+			<xsl:when test="@pawndoc">
 				<!--
 					A special summary tag that documents the fact that this library uses this
 					enhanced pawndoc.xsl.  When used with the default XSL this will show up, with
