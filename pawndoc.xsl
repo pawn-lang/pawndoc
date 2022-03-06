@@ -370,7 +370,28 @@
 </xsl:template>
 
 <xsl:template match="summary">
-	<p><xsl:apply-templates /></p><br />
+	<xsl:choose>
+			<xsl:when test="pawndoc">
+				<!--
+					A special summary tag that documents the fact that this library uses this
+					enhanced pawndoc.xsl.  When used with the default XSL this will show up, with
+					this one it won't.  Example:
+
+/**
+ * <summary pawndoc>
+ *   This library uses the enhanced <em>pawndoc.xsl</em> from
+ *   <a href="https://github.com/pawn-lang/pawndoc">pawn-lang/pawndoc</a>.  This
+ *   XSL has features such asn library and markdown support, and will not render
+ *   this message when used.
+ * </summary>
+ */
+
+				-->
+			</xsl:when>
+			<xsl:otherwise>
+				<p><xsl:apply-templates /></p><br />
+			</xsl:otherwise>
+		</xsl:choose>
 </xsl:template>
 
 <xsl:template match="param">
@@ -592,7 +613,7 @@
 </xsl:template>
 <xsl:template match="author">
 	<li class="author"><span class="markdown">*&#160;</span>
-	<xsl:choose>
+		<xsl:choose>
 			<xsl:when test="@href">
 				<a><xsl:attribute name="href"><xsl:value-of select="@href" /></xsl:attribute><span class="markdown">[</span><xsl:apply-templates /><span class="markdown">](<xsl:value-of select="@href" />)</span></a>
 			</xsl:when>
