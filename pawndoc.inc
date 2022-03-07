@@ -32,7 +32,7 @@
 
 /**
  * <!--
- * <transition target[^/]+/>
+ * <transition target(.*?)/>
  * -->
 */
 
@@ -56,11 +56,11 @@
  * So after generation of the XML file, you should clean it up with the
  * following RegEx replacement:
  *
- * Search: <transition target[^/]+/>
+ * Search: <transition target(.*?)/>
  * Replace: (nothing)
  *
  * This works 99% of the time, though you may get one where the corrupted target
- * includes the character `/`, in which case you should manually delete them.
+ * includes the sequence `/>`, in which case you should manually delete them.
  * Note that YSI now includes manual documentation for transitions, but these
  * all include the parameter `keep="true"`, which exists simply to not match
  * that RegEx.  I also put the search at the top of this block so it is easier
