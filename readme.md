@@ -521,15 +521,15 @@ this can be exploited to link many comments together by ensuring that EVERY line
 ```pawn
 #if SOME_CHECK
 	/// The documentation for <c>Func1</c>
-	stock Func1() ///
-	{             ///
-	}             ///
-	              ///
+	stock Func1() /// <p/>
+	{             /// <p/>
+	}             /// <p/>
+	              /// <p/>
 	/// The documentation for <c>Func1</c>
-	stock Func2() ///
-	{             ///
-	}             ///
-#else             ///
+	stock Func2() /// <p/>
+	{             /// <p/>
+	}             /// <p/>
+#else             /// <p/>
 	native UnusedForHidingDocumentation();
 #endif
 ```
@@ -663,15 +663,15 @@ compiler.  From *sscanf2.inc*:
 
 ```pawn
 
-///
+/// <p/>
 /// <library>sscanf</library>
 /// <remarks>
 /// Generic initialisation code called from a range of different init publics.
 /// </remarks>
-///
+/// <p/>
 /// <!--
-#if !defined __PawnBuild ///
-	forward SSCANF_RunInit(); ///
+#if !defined __PawnBuild /// <p/>
+	forward SSCANF_RunInit(); /// <p/>
 	/// There's a bug in the old compiler with the pawndoc generation for
 	/// functions containing <c>state</c>.  This little trick starts an XML
 	/// comment at the end of the documentation <c>SSCANF_RunInit</c> and
