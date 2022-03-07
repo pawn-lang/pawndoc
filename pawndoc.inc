@@ -68,7 +68,7 @@
  * -->
  */
 
-///
+/// <p/>
 
 // So YSI doesn't double-declare things.
 #define FIXES_PAWNDOC
@@ -100,7 +100,7 @@
  * </library>
  */
 
-///
+/// <p/>
 
 #if defined PAWNDOC
 	#define _PAWNDOC_FIRST_PASS 0

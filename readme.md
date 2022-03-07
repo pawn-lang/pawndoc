@@ -200,8 +200,9 @@ the solution to all these problems are easy - use the enum:
 
 ```pawn
 // An empty unattached documentation block before the enum.  Prevents previous
-// comments leaking to the enum
-///
+// comments leaking to the enum.  Can't be truly empty, due to a compiler bug,
+// but `<p/>` is sufficient.
+/// <p/>
 
 /**
 	Documentation on the enum, as normal.
@@ -285,7 +286,7 @@ At the top of your file:
 ///   </remarks>
 /// </library>
 
-///
+/// <p/>
 ```
 
 Only `name` is required.
@@ -311,7 +312,7 @@ only appear correctly if they are assigned to something, assign their value to a
 `const`:
 
 ```pawn
-///
+/// <p/>
 /**
  * <remarks>
  *   <c>e num</c> - get it?
@@ -435,7 +436,7 @@ The final solution is even more complex, so the explanation is in a later sectio
 Examples:
 
 ```pawn
-///
+/// <p/>
 /**
  *  My enumeration.
  */
