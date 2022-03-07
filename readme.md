@@ -99,14 +99,13 @@ Func() /// on
 }      /// <c>Func</c>
 ```
 
-Comments on the same line as a function or variable are easy - they are always
-attached to the given symbol.  So regardless of what else happens `on` and
-`<c>Func</c>` in the example above will always document `Func()`.  `All`, on the
-other hand, is a little different.
+Comments on the same line as a function or variable are easy - they are always attached to the given
+symbol.  So regardless of what else happens `on` and `<c>Func</c>` in the example above will always
+document `Func()`.  `All`, on the other hand, is a little different.
 
-Comments before a declaration will document the next symbol, unless there's
-another documentation comment between it and the symbol.  `///`s on adjacent
-lines count as the same documentation block so this is allowed:
+Comments before a declaration will document the next symbol, unless there's another documentation
+comment between it and the symbol.  `///`s on adjacent lines count as the same documentation block
+so this is allowed:
 
 ```pawn
 /// These lines
@@ -115,8 +114,8 @@ lines count as the same documentation block so this is allowed:
 new gVariable = 7;
 ```
 
-Blank lines, normal comments, and pre-processor directives after the last
-documentation comment don't matter:
+Blank lines, normal comments, and pre-processor directives after the last documentation comment
+don't matter:
 
 ```pawn
 /// These lines
@@ -129,8 +128,7 @@ documentation comment don't matter:
 new gVariable = 7;
 ```
 
-But any gap (including directives and normal comments) mid-documentation resets
-the comment block:
+But any gap (including directives and normal comments) mid-documentation resets the comment block:
 
 ```pawn
 /// These lines
@@ -140,8 +138,7 @@ the comment block:
 new gVariable = 7;
 ```
 
-`/** */` comments are always independent of each other, and will also break up
-`///` blocks:
+`/** */` comments are always independent of each other, and will also break up `///` blocks:
 
 ```pawn
 /// These lines
@@ -152,13 +149,11 @@ new gVariable = 7;
 new gVariable = 7;
 ```
 
-So what happens to the comments that don't get assigned to a symbol, because
-there's another documentation comment that gets in the way?  They are global
-documentation comments and appear in the `<general>` tag at the start of the
-XML.  These are "unattached", but still useful for documenting whole
-libraries or general information.  *fixes.inc* for example has a huge
-unattached documentation block at the start of the file for settings, styles,
-credits, and more.
+So what happens to the comments that don't get assigned to a symbol, because there's another
+documentation comment that gets in the way?  They are global documentation comments and appear in
+the `<general>` tag at the start of the XML.  These are "unattached", but still useful for
+documenting whole libraries or general information.  *fixes.inc* for example has a huge unattached
+documentation block at the start of the file for settings, styles, credits, and more.
 
 ## Documented Symbols
 
@@ -545,6 +540,9 @@ lines will be attached to `UnusedForHidingDocumentation`, which is never used an
 in the output, taking all its documentation with it.  `fixes.inc` has an instance of this spanning
 several hundred lines and nearly as many function definitions, because using a fake extra function
 for all of them would have been massively excessive.
+
+The size of the output XML file may be limited, and too many pawndoc comments may crash the
+compiler.  Though I do not know where this limit is.
 
 ## Automata Issue
 
