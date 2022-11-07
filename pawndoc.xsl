@@ -32,7 +32,6 @@
 	td.transition { padding-right: 10px; }
 	th { background-color: #336699; color: #ddeeff; border-bottom: medium none; border-left: medium none; border-right: medium none; border-top: medium none; font-size: x-small; margin: 2px; padding-bottom: 2px; padding-left: 4px; padding-right: 4px; padding-top: 2px; text-align: left; }
 	ul { margin-top: 0.5em; }
-	li.referrer { padding-right: 8px; }
 	li.dependency { padding-right: 8px; }
 	li.seealso { padding-right: 8px; }
 	li.attribute { padding-right: 8px; }
@@ -64,14 +63,14 @@
 	.render-mode .markdown { display: none; }
 	.markdown-mode .markdown { display: auto; }
 	.markdown-mode .render { display: none; }
+	.markdown-mode ul { list-style: none; list-style-type: none; }
 	.library-divider hr { border-radius: 5px; border: 5px solid #4e4887; }
 	.switcher { position: fixed; top: 0; right: 0; padding: 20px; background-color: #ddeeff; font-size: large; }
 	.switcher-hidden { display: none; }
 </style>
 </head>
 <body class="markdown-mode">
-	<h1 class="library"><xsl:value-of select="/doc/assembly/name" /></h1>
-	<h1 class="library markdown">==========================================</h1>
+	<h1 class="library"><xsl:value-of select="/doc/assembly/name" /></h1><h1 class="library markdown">==========================================</h1>
 
 	<div class="members">
 		<xsl:apply-templates select="/doc/members/member" mode="rest">
@@ -196,10 +195,6 @@
 					</blockquote>
 				</xsl:if>
 				<xsl:apply-templates select="example" />
-				<xsl:if test="referrer">
-					<h3><span class="markdown">####&#160;</span>Used by</h3><br />
-					<ul><xsl:apply-templates select="referrer" /></ul>
-				</xsl:if>
 				<xsl:if test="fixes">
 					<h3><span class="markdown">####&#160;</span>Fixes</h3>
 					<ul><xsl:apply-templates select="fixes" /></ul>
@@ -224,6 +219,12 @@
 				<p class="noindent">
 					<table>
 						<tr>
+							<td class="inline markdown">|&#160;</td><td class="header inline"><b><span class="markdown">**</span>Property<span class="markdown">**</span></b></td><td class="inline markdown">&#160;|&#160;</td><td class="inline"><b><span class="markdown">**</span>Value<span class="markdown">**</span></b></td><td class="inline markdown">&#160;|</td>
+						</tr>
+						<tr>
+							<td class="inline markdown">|</td><td class="inline markdown">---</td><td class="inline markdown">|</td><td class="inline markdown">---</td><td class="inline markdown">|</td>
+						</tr>
+						<tr>
 							<td class="inline markdown">|&#160;</td><td class="header inline"><b><span class="markdown">**</span>Value<span class="markdown">**</span></b></td><td class="inline markdown">&#160;|&#160;</td><td class="inline"><code><span class="markdown">`</span><xsl:value-of select="@value" /><span class="markdown">`</span></code></td><td class="inline markdown">&#160;|</td>
 						</tr>
 						<xsl:apply-templates select="tagname" />
@@ -235,10 +236,6 @@
 					<xsl:apply-templates select="remarks" />
 				</xsl:if>
 				<xsl:apply-templates select="example" />
-				<xsl:if test="referrer">
-					<h3><span class="markdown">####&#160;</span>Used by</h3><br />
-					<ul><xsl:apply-templates select="referrer" /></ul>
-				</xsl:if>
 				<xsl:if test="fixes">
 					<h3><span class="markdown">####&#160;</span>Fixes</h3>
 					<ul><xsl:apply-templates select="fixes" /></ul>
@@ -262,10 +259,26 @@
 				<xsl:apply-templates select="summary" />
 				<br /><h3><span class="markdown">####&#160;</span>Syntax</h3><br /><br /><pre><span class="markdown">```pawn<br /></span><xsl:value-of select="@syntax" /><span class="markdown"><br />```</span></pre><br />
 				<xsl:if test="param">
-					<p><table class="param"><xsl:apply-templates select="param" /></table></p>
+					<p>
+						<table class="param">
+							<tr>
+								<td class="inline markdown">|&#160;</td><td class="header inline"><b><span class="markdown">**</span>Name<span class="markdown">**</span></b></td><td class="inline markdown">&#160;|&#160;</td><td class="inline"><b><span class="markdown">**</span>Info<span class="markdown">**</span></b></td><td class="inline markdown">&#160;|</td>
+							</tr>
+							<tr>
+								<td class="inline markdown">|</td><td class="inline markdown">---</td><td class="inline markdown">|</td><td class="inline markdown">---</td><td class="inline markdown">|</td>
+							</tr>
+							<xsl:apply-templates select="param" />
+						</table>
+					</p>
 				</xsl:if>
 				<p class="noindent">
 					<table>
+						<tr>
+							<td class="inline markdown">|&#160;</td><td class="header inline"><b><span class="markdown">**</span>Property<span class="markdown">**</span></b></td><td class="inline markdown">&#160;|&#160;</td><td class="inline"><b><span class="markdown">**</span>Value<span class="markdown">**</span></b></td><td class="inline markdown">&#160;|</td>
+						</tr>
+						<tr>
+							<td class="inline markdown">|</td><td class="inline markdown">---</td><td class="inline markdown">|</td><td class="inline markdown">---</td><td class="inline markdown">|</td>
+						</tr>
 						<xsl:apply-templates select="tagname" />
 					</table>
 				</p>
@@ -275,10 +288,6 @@
 					<xsl:apply-templates select="remarks" />
 				</xsl:if>
 				<xsl:apply-templates select="example" />
-				<xsl:if test="referrer">
-					<h3><span class="markdown">####&#160;</span>Used by</h3>
-					<ul><xsl:apply-templates select="referrer" /></ul>
-				</xsl:if>
 				<xsl:if test="fixes">
 					<h3><span class="markdown">####&#160;</span>Fixes</h3>
 					<ul><xsl:apply-templates select="fixes" /></ul>
@@ -320,6 +329,12 @@
 				<xsl:apply-templates select="summary" />
 				<p class="noindent">
 					<table>
+						<tr>
+							<td class="inline markdown">|&#160;</td><td class="header inline"><b><span class="markdown">**</span>Property<span class="markdown">**</span></b></td><td class="inline markdown">&#160;|&#160;</td><td class="inline"><b><span class="markdown">**</span>Value<span class="markdown">**</span></b></td><td class="inline markdown">&#160;|</td>
+						</tr>
+						<tr>
+							<td class="inline markdown">|</td><td class="inline markdown">---</td><td class="inline markdown">|</td><td class="inline markdown">---</td><td class="inline markdown">|</td>
+						</tr>
 						<xsl:apply-templates select="tagname" />
 					</table>
 				</p>
@@ -328,10 +343,6 @@
 					<xsl:apply-templates select="remarks" />
 				</xsl:if>
 				<xsl:apply-templates select="example" />
-				<xsl:if test="referrer">
-					<h3><span class="markdown">####&#160;</span>Used by</h3><br />
-					<ul><xsl:apply-templates select="referrer" /></ul>
-				</xsl:if>
 				<xsl:if test="fixes">
 					<h3><span class="markdown">####&#160;</span>Fixes</h3>
 					<ul><xsl:apply-templates select="fixes" /></ul>
@@ -436,10 +447,6 @@
 	<li class="attribute"><span class="markdown">*&#160;</span><code><span class="markdown">`</span><xsl:value-of select="@name" /><span class="markdown">`</span></code></li>
 </xsl:template>
 
-<xsl:template match="referrer">
-	<li class="referrer"><span class="markdown">*&#160;</span><a><xsl:attribute name="href">#<xsl:value-of select="@name" /></xsl:attribute><span class="markdown">[</span><code><span class="markdown">`</span><xsl:value-of select="@name" /><span class="markdown">`</span></code><span class="markdown">](#<xsl:value-of select="@name" />)</span></a></li>
-</xsl:template>
-
 <xsl:template match="dependency">
 	<li class="dependency"><span class="markdown">*&#160;</span><a><xsl:attribute name="href">#<xsl:value-of select="@name" /></xsl:attribute><span class="markdown">[</span><code><span class="markdown">`</span><xsl:value-of select="@name" /><span class="markdown">`</span></code><span class="markdown">](#<xsl:value-of select="@name" />)</span></a></li>
 </xsl:template>
@@ -495,11 +502,9 @@
 <xsl:template match="library">
 	<div class="library-divider"><br /><br /><span class="markdown">__________________________________________</span><hr /><br /><br /></div>
 
-	<h1 class="library"><xsl:value-of select="@name" /><xsl:if test="@version"> - v<xsl:value-of select="@version" /></xsl:if></h1>
-	<h1 class="library markdown">==========================================</h1>
+	<h1 class="library"><xsl:value-of select="@name" /><xsl:if test="@version"> - v<xsl:value-of select="@version" /></xsl:if></h1><h1 class="library markdown">==========================================</h1>
 	<xsl:if test="@summary">
-		<h2 class="library"><xsl:value-of select="@summary" /></h2>
-		<h2 class="library markdown">------------------------------------------</h2>
+		<h2 class="library"><xsl:value-of select="@summary" /></h2><h2 class="library markdown">------------------------------------------</h2>
 	</xsl:if>
 	<xsl:if test="@license">
 		<div class="license"><xsl:value-of select="@license" /></div>
