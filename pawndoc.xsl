@@ -227,7 +227,7 @@
 						<tr>
 							<td class="inline markdown">|&#160;</td><td class="header inline"><b><span class="markdown">**</span>Value<span class="markdown">**</span></b></td><td class="inline markdown">&#160;|&#160;</td><td class="inline"><code><span class="markdown">`</span><xsl:value-of select="@value" /><span class="markdown">`</span></code></td><td class="inline markdown">&#160;|</td>
 						</tr>
-						<xsl:apply-templates select="tagname" />
+						<xsl:apply-templates select="tagname" mode="parameter-tag" />
 						<xsl:apply-templates select="size" />
 					</table>
 				</p>
@@ -262,7 +262,7 @@
 					<p>
 						<table class="param">
 							<tr>
-								<td class="inline markdown">|&#160;</td><td class="header inline"><b><span class="markdown">**</span>Name<span class="markdown">**</span></b></td><td class="inline markdown">&#160;|&#160;</td><td class="inline"><b><span class="markdown">**</span>Info<span class="markdown">**</span></b></td><td class="inline markdown">&#160;|</td>
+								<td class="inline markdown">|&#160;</td><td class="header inline"><b><span class="markdown">**</span>Parameter<span class="markdown">**</span></b></td><td class="inline markdown">&#160;|&#160;</td><td class="inline"><b><span class="markdown">**</span>Info<span class="markdown">**</span></b></td><td class="inline markdown">&#160;|</td>
 							</tr>
 							<tr>
 								<td class="inline markdown">|</td><td class="inline markdown">---</td><td class="inline markdown">|</td><td class="inline markdown">---</td><td class="inline markdown">|</td>
@@ -272,15 +272,7 @@
 					</p>
 				</xsl:if>
 				<p class="noindent">
-					<table>
-						<tr>
-							<td class="inline markdown">|&#160;</td><td class="header inline"><b><span class="markdown">**</span>Property<span class="markdown">**</span></b></td><td class="inline markdown">&#160;|&#160;</td><td class="inline"><b><span class="markdown">**</span>Value<span class="markdown">**</span></b></td><td class="inline markdown">&#160;|</td>
-						</tr>
-						<tr>
-							<td class="inline markdown">|</td><td class="inline markdown">---</td><td class="inline markdown">|</td><td class="inline markdown">---</td><td class="inline markdown">|</td>
-						</tr>
-						<xsl:apply-templates select="tagname" />
-					</table>
+					<xsl:apply-templates select="tagname" mode="variable-tag" />
 				</p>
 				<xsl:apply-templates select="returns" />
 				<xsl:if test="remarks">
@@ -328,15 +320,7 @@
 				<br />
 				<xsl:apply-templates select="summary" />
 				<p class="noindent">
-					<table>
-						<tr>
-							<td class="inline markdown">|&#160;</td><td class="header inline"><b><span class="markdown">**</span>Property<span class="markdown">**</span></b></td><td class="inline markdown">&#160;|&#160;</td><td class="inline"><b><span class="markdown">**</span>Value<span class="markdown">**</span></b></td><td class="inline markdown">&#160;|</td>
-						</tr>
-						<tr>
-							<td class="inline markdown">|</td><td class="inline markdown">---</td><td class="inline markdown">|</td><td class="inline markdown">---</td><td class="inline markdown">|</td>
-						</tr>
-						<xsl:apply-templates select="tagname" />
-					</table>
+					<xsl:apply-templates select="tagname" mode="return-tag" />
 				</p>
 				<xsl:if test="remarks">
 					<h3><span class="markdown">####&#160;</span>Remarks</h3><br />
@@ -417,10 +401,20 @@
 	<span class="paraminfo"><code><span class="markdown">`</span><xsl:apply-templates /><span class="markdown">`</span></code></span>
 </xsl:template>
 
-<xsl:template match="tagname">
+<xsl:template match="tagname" mode="parameter-tag">
 	<tr>
 		<td class="inline markdown">|&#160;</td><td class="header inline"><b><span class="markdown">**</span>Tag<span class="markdown">**</span></b></td><td class="inline markdown">&#160;|&#160;</td><td class="inline"><code><span class="markdown">`</span><xsl:value-of select="@value" />:<span class="markdown">`</span></code></td><td class="inline markdown">&#160;|</td>
 	</tr>
+</xsl:template>
+
+<xsl:template match="tagname" mode="return-tag">
+	<h3><span class="markdown">####&#160;</span>Tag</h3>
+	<p><code><span class="markdown">`</span><xsl:value-of select="@value" />:<span class="markdown">`</span></code></p><br />
+</xsl:template>
+
+<xsl:template match="tagname" mode="variable-tag">
+	<h3><span class="markdown">####&#160;</span>Tag</h3>
+	<p><code><span class="markdown">`</span><xsl:value-of select="@value" />:<span class="markdown">`</span></code></p><br />
 </xsl:template>
 
 <xsl:template match="size">
