@@ -250,10 +250,11 @@
 				<xsl:apply-templates select="summary" />
 				<br /><h3><span class="markdown">####&#160;</span>Syntax</h3><br /><br /><pre><span class="markdown">```pawn<br /></span><xsl:value-of select="@syntax" /><span class="markdown"><br />```</span></pre><br />
 				<xsl:if test="param">
+					<br /><h3><span class="markdown">####&#160;</span>Parameters</h3><br /><br />
 					<p>
 						<table class="param">
 							<tr>
-								<td class="inline markdown">|&#160;</td><td class="header inline"><b><span class="markdown">**</span>Parameter<span class="markdown">**</span></b></td><td class="inline markdown">&#160;|&#160;</td><td class="inline"><b><span class="markdown">**</span>Info<span class="markdown">**</span></b></td><td class="inline markdown">&#160;|</td>
+								<td class="inline markdown">|&#160;</td><td class="header inline"><b><span class="markdown">**</span>Name<span class="markdown">**</span></b></td><td class="inline markdown">&#160;|&#160;</td><td class="inline"><b><span class="markdown">**</span>Info<span class="markdown">**</span></b></td><td class="inline markdown">&#160;|</td>
 							</tr>
 							<tr>
 								<td class="inline markdown">|</td><td class="inline markdown">---</td><td class="inline markdown">|</td><td class="inline markdown">---</td><td class="inline markdown">|</td>
