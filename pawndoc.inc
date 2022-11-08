@@ -262,10 +262,10 @@ _FIXES_FUNC_PAWNDOC(ENUM_PAWNDOC(const symbol[]));
  *   (this one), but at least the documentation for this one function can
  *   explain why it exists.
  *   <p />
- *   This is <c>ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ</c> and starts the internal
+ *   This is <c>Zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</c> and starts the internal
  *   functions block.  This is the last possible name before the first character
  *   is <c>_</c> when the functions are sorted lexicographically
- *   (alphabetically).  There's also <c>ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZY</c> that
+ *   (alphabetically).  There's also <c>Zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzy</c> that
  *   starts the variables block; they could have the same name if they were not
  *   declared in the same scope, but they might not always be separately
  *   defined.
@@ -277,7 +277,7 @@ _FIXES_FUNC_PAWNDOC(ENUM_PAWNDOC(const symbol[]));
  * <!--
  */
 
-static stock ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ() {}
+static stock Zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz() {}
 
 /**
  * <library>pawndoc</library>
@@ -289,7 +289,7 @@ static stock ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ() {}
  *   used throughout pawndoc (and most of programming).  Unfortunately these
  *   weirdly named internal functions appear in the generated documentation
  *   always.  This is the best way to hide them.  You still see one function
- *   (<c>ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ</c>), but at least the documentation
+ *   (<c>Zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</c>), but at least the documentation
  *   for that can explain why it exists.
  *   <p />
  *   This is <c>_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</c> and ends the internal
@@ -322,10 +322,10 @@ static stock _zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz() {}
  *   (this one), but at least the documentation for this one variable can
  *   explain why it exists.
  *   <p />
- *   This is <c>ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZY</c> and starts the internal
+ *   This is <c>Zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzy</c> and starts the internal
  *   variables block.  This is the last possible name, except one, before the
  *   first character is <c>_</c> when the functions are sorted lexicographically
- *   (alphabetically).  There's also <c>ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ</c> that
+ *   (alphabetically).  There's also <c>Zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</c> that
  *   starts the functions block; they could have the same name if they were not
  *   declared in the same scope, but they might not always be separately
  *   defined.
@@ -337,7 +337,7 @@ static stock _zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz() {}
  * <!--
  */
 
-static stock ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZY;
+static stock Zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzy;
 
 /**
  * <library>pawndoc</library>
@@ -349,7 +349,7 @@ static stock ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZY;
  *   used throughout pawndoc (and most of programming).  Unfortunately these
  *   weirdly named internal variables appear in the generated documentation
  *   always.  This is the best way to hide them.  You still see one variable
- *   (<c>ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZY</c>), but at least the documentation
+ *   (<c>Zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzy</c>), but at least the documentation
  *   for that can explain why it exists.
  *   <p />
  *   This is <c>_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzy</c> and ends the internal
