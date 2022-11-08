@@ -185,11 +185,11 @@ _FIXES_FUNC_PAWNDOC(CONST_PAWNDOC(const symbol[] = 0));
  *   attached to it.  This seems to be the best way to prevent the documentation
  *   from appearing in XML (<c>-r</c>) output - even conditional compilation
  *   doesn't work on comments.
- *   <p />
+ *   <p/>
  *   The input should have some unique name, so when using it within an ifdef
  *   block, don't use the same name as the tested symbol, because the the
  *   replacement in question will be applied to the hidden variable as well.
- *   <p />
+ *   <p/>
  *   This should also be a globally unique symbol name, because this only works
  *   with `<c>const</c>`, not `<c>static const</c>`.
  * </remarks>
@@ -261,7 +261,7 @@ _FIXES_FUNC_PAWNDOC(ENUM_PAWNDOC(const symbol[]));
  *   always.  This is the best way to hide them.  You still see one function
  *   (this one), but at least the documentation for this one function can
  *   explain why it exists.
- *   <p />
+ *   <p/>
  *   This is <c>Zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</c> and starts the internal
  *   functions block.  This is the last possible name before the first character
  *   is <c>_</c> when the functions are sorted lexicographically
@@ -269,7 +269,7 @@ _FIXES_FUNC_PAWNDOC(ENUM_PAWNDOC(const symbol[]));
  *   starts the variables block; they could have the same name if they were not
  *   declared in the same scope, but they might not always be separately
  *   defined.
- *   <p />
+ *   <p/>
  *   Note that the actual hiding itself is done by an XML comment started here
  *   and ended by a later variable.
  * </remarks>
@@ -291,7 +291,7 @@ static stock Zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz() {}
  *   always.  This is the best way to hide them.  You still see one function
  *   (<c>Zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</c>), but at least the documentation
  *   for that can explain why it exists.
- *   <p />
+ *   <p/>
  *   This is <c>_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</c> and ends the internal
  *   functions block.  This is the last possible name before the first character
  *   is no longer <c>_</c> when the functions are sorted lexicographically
@@ -299,7 +299,7 @@ static stock Zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz() {}
  *   ends the variables block; they could have the same name if they were not
  *   declared in the same scope, but they might not always be separately
  *   defined.
- *   <p />
+ *   <p/>
  *   Note that the actual hiding itself is done by an XML comment started
  *   earlier and ended here.
  * </remarks>
@@ -321,7 +321,7 @@ static stock _zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz() {}
  *   always.  This is the best way to hide them.  You still see one variable
  *   (this one), but at least the documentation for this one variable can
  *   explain why it exists.
- *   <p />
+ *   <p/>
  *   This is <c>Zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzy</c> and starts the internal
  *   variables block.  This is the last possible name, except one, before the
  *   first character is <c>_</c> when the functions are sorted lexicographically
@@ -329,7 +329,7 @@ static stock _zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz() {}
  *   starts the functions block; they could have the same name if they were not
  *   declared in the same scope, but they might not always be separately
  *   defined.
- *   <p />
+ *   <p/>
  *   Note that the actual hiding itself is done by an XML comment started here
  *   and ended by a later variable.
  * </remarks>
@@ -351,7 +351,7 @@ static stock Zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzy;
  *   always.  This is the best way to hide them.  You still see one variable
  *   (<c>Zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzy</c>), but at least the documentation
  *   for that can explain why it exists.
- *   <p />
+ *   <p/>
  *   This is <c>_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzy</c> and ends the internal
  *   variables block.  This is the last possible name before the first character
  *   is no longer <c>_</c>, except for one, when the functions are sorted
@@ -359,7 +359,7 @@ static stock Zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzy;
  *   <c>_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</c> that ends the functions block; they
  *   could have the same name if they were not declared in the same scope, but
  *   they might not always be separately defined.
- *   <p />
+ *   <p/>
  *   Note that the actual hiding itself is done by an XML comment started
  *   earlier and ended here.
  * </remarks>
